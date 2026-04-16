@@ -39,21 +39,96 @@ This project demonstrates end-to-end DevOps workflows including Infrastructure a
 
 ```
 devops-platform/
+├── .github/
+│   └── workflows/              # GitHub Actions CI/CD pipelines
+│       ├── terraform-plan.yml
+│       ├── terraform-apply.yml
+│       ├── docker-build.yml
+│       └── k8s-deploy.yml
 │
-├── apps/
+├── terraform/
+│   ├── environments/
+│   │   ├── dev/
+│   │   │   ├── main.tf
+│   │   │   ├── variables.tf
+│   │   │   ├── outputs.tf
+│   │   │   └── terraform.tfvars
+│   │   ├── staging/
+│   │   └── prod/
+│   │
+│   ├── modules/
+│   │   ├── vpc/
+│   │   │   ├── main.tf
+│   │   │   ├── variables.tf
+│   │   │   ├── outputs.tf
+│   │   │   └── README.md
+│   │   ├── eks/
+│   │   ├── rds/
+│   │   ├── s3/
+│   │   └── iam/
+│   │
+│   └── backend.tf              # S3 + DynamoDB remote state config
+│
+├── kubernetes/
+│   ├── base/                   # Kustomize base manifests
+│   │   ├── frontend/
+│   │   ├── backend/
+│   │   └── worker/
+│   │
+│   ├── overlays/               # Environment-specific patches
+│   │   ├── dev/
+│   │   ├── staging/
+│   │   └── prod/
+│   │
+│   └── helm-charts/            # Custom Helm charts (if needed)
+│
+├── applications/
 │   ├── frontend/
+│   │   ├── src/
+│   │   ├── Dockerfile
+│   │   ├── .dockerignore
+│   │   └── package.json
+│   │
 │   ├── backend/
+│   │   ├── src/
+│   │   ├── Dockerfile
+│   │   └── requirements.txt
+│   │
 │   └── worker/
+│       ├── src/
+│       └── Dockerfile
 │
-├── infra/terraform/
-├── k8s/
-├── helm/
-├── gitops/
-├── monitoring/
-├── ci-cd/
+├── observability/
+│   ├── prometheus/
+│   │   └── values.yaml
+│   ├── grafana/
+│   │   ├── dashboards/
+│   │   └── values.yaml
+│   └── loki/
+│
+├── argocd/
+│   ├── applications/           # ArgoCD Application manifests
+│   │   ├── frontend-app.yaml
+│   │   ├── backend-app.yaml
+│   │   └── observability-app.yaml
+│   │
+│   └── projects/               # ArgoCD Projects (RBAC boundaries)
+│       └── devops-platform-project.yaml
+│
+├── scripts/
+│   ├── setup-aws-backend.sh   # Bootstrap S3/DynamoDB for Terraform state
+│   ├── deploy-argocd.sh        # Install ArgoCD on EKS
+│   └── validate-cluster.sh     # Health checks
+│
 ├── docs/
-└── docker-compose.yml
-```
+│   ├── architecture.md
+│   ├── runbook.md              # Incident response procedures
+│   └── disaster-recovery.md
+│
+├── .gitignore
+├── .editorconfig               # Code formatting consistency
+├── README.md
+└── Makefile                    # Common commands (terraform apply, etc.)
 
 ---
 
